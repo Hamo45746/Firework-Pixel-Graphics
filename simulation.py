@@ -27,6 +27,6 @@ class Simulation:
                 glColor3f(1.0, 1.0, 1.0)  # White for active firework
                 glVertex2f(fw.x * 2 / self.grid.width - 1, 1 - fw.y * 2 / self.grid.height)
             for p in fw.particles:
-                glColor3f(((p.color >> 16) & 0xFF) / 255.0, ((p.color >> 8) & 0xFF) / 255.0, (p.color & 0xFF) / 255.0)
+                glColor3f(((p.colour >> 16) & 0xFF) / 255.0, ((p.colour >> 8) & 0xFF) / 255.0, (p.colour & 0xFF) / 255.0)
                 glVertex2f(p.x * 2 / self.grid.width - 1, 1 - p.y * 2 / self.grid.height)
         glEnd()
