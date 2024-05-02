@@ -8,8 +8,14 @@ def main():
         print("Failed to initialise GLFW")
         return
 
-    X, Y = 200, 150
-    window = glfw.create_window(X, Y, "Fixel", None, None)
+    # Window dimensions
+    x_window, y_window = 200, 150
+    scaling_factor = 2
+    # Logical grid dimensions (smaller than the window)
+    grid_width = int(x_window / scaling_factor)
+    grid_height = int(y_window / scaling_factor)
+
+    window = glfw.create_window(x_window, y_window, "Fixel", None, None)
     if not window:
         glfw.terminate()
         print("Failed to create GLFW window")
@@ -18,13 +24,14 @@ def main():
     glfw.make_context_current(window)
     glfw.swap_interval(1)
 
-    grid = Grid(X, Y)
+    grid = Grid(grid_width, grid_height)
     grid.clear()
 
     # Setup for rendering
     glClearColor(0, 0, 0, 1)
     glEnable(GL_POINT_SMOOTH)
-    glPointSize(10)
+    point_size = scaling_factor * 2
+    glPointSize(point_size)
 
     is_dragging = False
 
@@ -42,9 +49,10 @@ def main():
             create_particle_at_mouse_pos(window)
 
     def create_particle_at_mouse_pos(window):
+        # Scale mouse coordinates to grid coordinates
         x, y = glfw.get_cursor_pos(window)
-        x, y = int(x), int(y)
-        grid.set(x, y, np.random.randint(1, 0xFFFFFF))
+        grid_x, grid_y = int(x * grid_width / x_window), int(y * grid_height / y_window)
+        grid.set(grid_x, grid_y, np.random.randint(1, 0xFFFFFF))
 
     glfw.set_mouse_button_callback(window, on_mouse_button)
     glfw.set_cursor_pos_callback(window, on_mouse_move)
@@ -55,12 +63,13 @@ def main():
 
         glClear(GL_COLOR_BUFFER_BIT)
         glBegin(GL_POINTS)
+        # Adjust rendering to scale grid to window size
         for y in range(grid.height):
             for x in range(grid.width):
                 colour = grid.grid[y * grid.width + x]
                 if colour != 0:
                     glColor3f(((colour >> 16) & 0xFF) / 255.0, ((colour >> 8) & 0xFF) / 255.0, (colour & 0xFF) / 255.0)
-                    glVertex2f(x * 2 / X - 1, 1 - y * 2 / Y)
+                    glVertex2f(x * 2 / grid_width - 1, 1 - y * 2 / grid_height)
         glEnd()
 
         glfw.swap_buffers(window)
