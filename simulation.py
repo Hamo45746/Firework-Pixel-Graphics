@@ -27,13 +27,13 @@ class Simulation:
         glClearColor(0.0, 0.0, 0.0, 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
 
-        # Render the background first without changing OpenGL settings
+        # Render the background first
         self.render_background()
 
-        # Set the point size for fireworks rendering
+        # Set point size for fireworks
         glPointSize(self.scaling_factor * 2)
 
-        # Begin drawing points
+        # Draw points
         glBegin(GL_POINTS)
         for fw in self.fireworks:
             if not fw.is_exploded:
@@ -41,7 +41,7 @@ class Simulation:
                 glColor3f(1.0, 1.0, 1.0)
                 glVertex2f(fw.x * 2 / self.grid.width - 1, 1 - fw.y * 2 / self.grid.height)
             for p in fw.particles:
-                # Render particles with their respective colours
+                # Render particles with their colours
                 glColor3f(((p.colour >> 16) & 0xFF) / 255.0, ((p.colour >> 8) & 0xFF) / 255.0, (p.colour & 0xFF) / 255.0)
                 glVertex2f(p.x * 2 / self.grid.width - 1, 1 - p.y * 2 / self.grid.height)
         glEnd()
@@ -54,7 +54,7 @@ class Simulation:
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 
-        # Disable depth testing and texturing for the background
+        # Disable depth testing and texturing
         glDisable(GL_DEPTH_TEST)
         glDisable(GL_TEXTURE_2D)
 

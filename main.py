@@ -7,7 +7,7 @@ def main():
         return
 
     x_window, y_window = 400, 300  # Window dimensions
-    scaling_factor = 2  # Each logical grid cell maps to `scaling_factor x scaling_factor` pixels
+    scaling_factor = 2
     grid_width = x_window // scaling_factor
     grid_height = y_window // scaling_factor
 

@@ -9,7 +9,7 @@ class Particle:
 
     def update(self):
         self.x += self.vx
-        self.vy += 0.025  # Gravity effect
+        self.vy += 0.025  # Gravity effect of vertical velocity
         self.y += self.vy
         if self.lifespan is not None:
             self.lifespan -= 1
