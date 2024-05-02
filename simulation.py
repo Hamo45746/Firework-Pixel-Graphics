@@ -43,7 +43,7 @@ def main():
 
     def create_particle_at_mouse_pos(window):
         x, y = glfw.get_cursor_pos(window)
-        x, y = int(x), Y - int(y)
+        x, y = int(x), int(y)
         grid.set(x, y, np.random.randint(1, 0xFFFFFF))
 
     glfw.set_mouse_button_callback(window, on_mouse_button)
@@ -57,9 +57,9 @@ def main():
         glBegin(GL_POINTS)
         for y in range(grid.height):
             for x in range(grid.width):
-                color = grid.grid[y * grid.width + x]
-                if color != 0:
-                    glColor3f(((color >> 16) & 0xFF) / 255.0, ((color >> 8) & 0xFF) / 255.0, (color & 0xFF) / 255.0)
+                colour = grid.grid[y * grid.width + x]
+                if colour != 0:
+                    glColor3f(((colour >> 16) & 0xFF) / 255.0, ((colour >> 8) & 0xFF) / 255.0, (colour & 0xFF) / 255.0)
                     glVertex2f(x * 2 / X - 1, 1 - y * 2 / Y)
         glEnd()
 
