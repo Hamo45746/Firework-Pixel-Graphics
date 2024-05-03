@@ -47,27 +47,24 @@ class Background:
         return grid
 
     def load_image_as_texture(self, image_path):
-        # Load an image and convert it to a texture
         img = Image.open(image_path)
         img_data = img.convert("RGBA").tobytes("raw", "RGBA", 0, -1)
         texture_id = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, texture_id)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.width, img.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img_data)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        
+        # Set the texture filtering parameters
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        
         glBindTexture(GL_TEXTURE_2D, 0)
         return texture_id, img.width, img.height
 
+
     def load_additional_textures(self):
-        # Load specific images as textures
-        #tree_texture = self.load_image_as_texture("PNGs/Pixel_Pine_1.png")
+        # Load images as textures
         background_texture = self.load_image_as_texture("PNGs/Background.png")
-        # self.additional_textures.append((tree_texture, (0.85, -0.2), 0.7))
-        # self.additional_textures.append((tree_texture, (-0.9, -0.2), 0.7))
-        # self.additional_textures.append((tree_texture, (0.5, -0.2), 0.7))  # (texture_id, position, scale)
-        # self.additional_textures.append((tree_texture, (0.7, -0.35), 0.8))
-        # self.additional_textures.append((tree_texture, (0.9, -0.55), 0.7))
-        self.additional_textures.append((background_texture, (0, 0), 1))
+        self.additional_textures.append((background_texture, (0, 0), 1)) # (texture_id, position, scale)
     
     def setup_texture(self):
         # Flatten grid and convert to a format suitable for OpenGL texture
