@@ -60,14 +60,14 @@ class Background:
 
     def load_additional_textures(self):
         # Load specific images as textures
-        tree_texture = self.load_image_as_texture("PNGs/Pixel_Pine_1.png")
-        #tent_texture = self.load_image_as_texture("path/to/tent.png")
-        self.additional_textures.append((tree_texture, (0.85, -0.2), 0.7))
-        self.additional_textures.append((tree_texture, (-0.9, -0.2), 0.7))
-        self.additional_textures.append((tree_texture, (0.5, -0.2), 0.7))  # (texture_id, position, scale)
-        self.additional_textures.append((tree_texture, (0.7, -0.35), 0.8))
-        self.additional_textures.append((tree_texture, (0.9, -0.55), 0.7))
-        #self.additional_textures.append((tent_texture, (0.3, 0.8), 0.1))
+        #tree_texture = self.load_image_as_texture("PNGs/Pixel_Pine_1.png")
+        background_texture = self.load_image_as_texture("PNGs/Background.png")
+        # self.additional_textures.append((tree_texture, (0.85, -0.2), 0.7))
+        # self.additional_textures.append((tree_texture, (-0.9, -0.2), 0.7))
+        # self.additional_textures.append((tree_texture, (0.5, -0.2), 0.7))  # (texture_id, position, scale)
+        # self.additional_textures.append((tree_texture, (0.7, -0.35), 0.8))
+        # self.additional_textures.append((tree_texture, (0.9, -0.55), 0.7))
+        self.additional_textures.append((background_texture, (0, 0), 1))
     
     def setup_texture(self):
         # Flatten grid and convert to a format suitable for OpenGL texture

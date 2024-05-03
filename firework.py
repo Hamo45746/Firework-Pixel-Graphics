@@ -20,7 +20,7 @@ class Firework:
             self.particles = [p for p in self.particles if p.update()]
 
     def explode(self):
-        num_particles = 20
+        num_particles = 30
         spread = 1.5  # Spread variable to keep particles closer
         colour = random.randint(1, 0xFFFFFF)  # Random colour for firework particles
         for _ in range(num_particles):
