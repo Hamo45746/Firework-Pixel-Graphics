@@ -24,7 +24,7 @@ def main():
     def on_mouse_button(window, button, action, mods):
         if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.PRESS:
             x, y = glfw.get_cursor_pos(window)
-            # Convert window coordinates to grid coordinates
+            # Convert window to grid coordinates
             grid_x, grid_y = int(x / scaling_factor), int(y / scaling_factor)
             sim.launch_firework(grid_x, grid_y)
 

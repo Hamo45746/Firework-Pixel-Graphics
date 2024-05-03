@@ -16,7 +16,6 @@ class Background:
         # Initialise empty grid to represent the background scene
         grid = []
 
-        # Define shades of green for the grass
         ground_colours = [
             (0.0, 0.4, 0.0),  # Darker green
             (0.0, 0.5, 0.0),  # Mid-dark green
@@ -25,25 +24,19 @@ class Background:
             (0.2, 0.8, 0.2)   # Lighter green
         ]
 
-        # Iterate over each row
         for y in range(self.height):
-            row = []  # Initialise an empty row
+            row = [] 
             # Determine if row in ground or sky
             if y >= self.height * 3 // 4:
-                # If in ground randomly select a shade of green for each pixel
                 row = [random.choice(ground_colours) for _ in range(self.width)]
             else:
-                # If in sky set row to black
                 row = [(0, 0, 0)] * self.width
-            # Add row to grid
             grid.append(row)
-        # Add stars to the sky
         for _ in range(100):
             # Generate random coordinates for stars
             x = random.randint(0, self.width - 1)
             y = random.randint(0, self.height * 3 // 4 - 1)
-            # Set colour of the point to white for stars
-            grid[y][x] = (1, 1, 1)  # Note reversal of x and y for proper indexing
+            grid[y][x] = (1, 1, 1)  # Note reversal of x and y for indexing
         return grid
 
     def load_image_as_texture(self, image_path):
@@ -67,14 +60,14 @@ class Background:
         self.additional_textures.append((background_texture, (0, 0), 1)) # (texture_id, position, scale)
     
     def setup_texture(self):
-        # Flatten grid and convert to a format suitable for OpenGL texture
+        # Flatten grid + convert to format suitable for OpenGL texture
         data = []
         for row in self.grid:
             for colour in row:
-                data.extend([int(c * 255) for c in colour])  # Convert to RGB values
+                data.extend([int(c * 255) for c in colour])  # Convert to RGB
         data = bytes(data)
 
-        # Generate and bind the texture
+        # Generate and bind texture
         self.texture_id = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, self.texture_id)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.width, self.height, 0, GL_RGB, GL_UNSIGNED_BYTE, data)
