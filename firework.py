@@ -1,11 +1,12 @@
 import random
+import math
 from particle import Particle
 
 class Firework:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.target_height = y - random.randint(60, 110)
+        self.target_height = y - random.randint(50, 100)
         self.is_exploded = False
         self.colour = 0xFFFFFF  # Fireworks are white
         self.particles = []
@@ -20,10 +21,16 @@ class Firework:
             self.particles = [p for p in self.particles if p.update()]
 
     def explode(self):
-        num_particles = 40
-        spread = 1.5
+        num_particles = 60
+        spread = 0.7
         colour = random.randint(1, 0xFFFFFF)  # Random colour
+        
         for _ in range(num_particles):
-            vx, vy = (random.random() * 2 - 1) * spread, (random.random() * 2 - 1) * spread
-            lifespan = 100 if random.random() < 0.5 else None  # Random decay
+            angle = random.uniform(0, 2 * math.pi)  # Angle between 0 and 360 degrees
+            magnitude = random.uniform(0, spread)   # Magnitude from 0 to spread
+            # Horizontal velocity
+            vx = magnitude * math.cos(angle)
+            # Vertical velocity
+            vy = magnitude * math.sin(angle) - 0.75
+            lifespan = 150
             self.particles.append(Particle(self.x, self.y, vx, vy, colour, lifespan))

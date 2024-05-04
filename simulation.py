@@ -1,4 +1,3 @@
-import glfw
 from OpenGL.GL import *
 from grid import Grid
 from firework import Firework
@@ -36,7 +35,7 @@ class Simulation:
         # Position where the fire is
         fire_x = random.uniform(114, 121)
         fire_y = random.uniform(113, 123)
-        if random.random() < 0.3:  # Control the emission rate
+        if random.random() < 0.1:  # Control the emission rate
             self.flame_particles.append(FlameParticle(fire_x, fire_y))
             self.smoke_particles.append(SmokeParticle(fire_x, fire_y))
 
