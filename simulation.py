@@ -84,6 +84,13 @@ class Simulation:
     def update_firework_buffers(self):
         firework_data = []
         for fw in self.fireworks:
+            if not fw.is_exploded:
+                x = fw.x
+                y = fw.y
+                normalized_x = x * 2 / self.width - 1
+                normalized_y = 1 - y * 2 / self.height
+                r, g, b = fw.colour
+                firework_data.extend([normalized_x, normalized_y, r, g, b, 1.0])
             for p in fw.particles:
                 x = p.x
                 y = p.y

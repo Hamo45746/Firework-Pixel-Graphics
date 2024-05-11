@@ -8,7 +8,7 @@ class Firework:
         self.y = y
         self.target_height = y - random.randint(50, 100)
         self.is_exploded = False
-        self.colour = 0xFFFFFF  # Fireworks are white
+        self.colour = (1, 1, 1)  # Fireworks are white
         self.particles = []
 
     def update(self):
