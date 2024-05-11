@@ -16,8 +16,6 @@ class Simulation:
         self.background = Background(width, height)
         
         self.particle_shader_program = create_shader_program("particle_vertex_shader.glsl", "particle_fragment_shader.glsl")
-        self.scaling_factor_location = glGetUniformLocation(self.particle_shader_program, "scaling_factor")
-
         
         self.fireworks = []
         self.flame_particles = []
@@ -102,7 +100,7 @@ class Simulation:
 
     def render_fireworks(self):
         glUseProgram(self.particle_shader_program)
-        glUniform1f(self.scaling_factor_location, self.scaling_factor)
+        glPointSize(self.scaling_factor * 2)
         glBindVertexArray(self.firework_vao)
         glDrawArrays(GL_POINTS, 0, len(self.fireworks) * len(self.fireworks[0].particles))
         glBindVertexArray(0)
@@ -110,7 +108,7 @@ class Simulation:
 
     def render_particles(self):
         glUseProgram(self.particle_shader_program)
-        glUniform1f(self.scaling_factor_location, self.scaling_factor)
+        glPointSize(self.scaling_factor * 2)
         glBindVertexArray(self.particle_vao)
         glDrawArrays(GL_POINTS, 0, len(self.flame_particles + self.smoke_particles))
         glBindVertexArray(0)
