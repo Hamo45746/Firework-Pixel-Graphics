@@ -46,13 +46,29 @@ class Background:
         return grid
     
     def setup_background(self):
+        # Convert grid data to a suitable format for OpenGL texture
+        data = []
+        for row in self.grid:
+            for color in row:
+                data.extend([int(c * 255) for c in color])
+        data = bytes(data)
+
+        # Generate and bind texture
+        self.texture_id = glGenTextures(1)
+        glBindTexture(GL_TEXTURE_2D, self.texture_id)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.width, self.height, 0, GL_RGB, GL_UNSIGNED_BYTE, data)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glBindTexture(GL_TEXTURE_2D, 0)
+
         # Vertices for a full-screen quad with texture coordinates
         vertices = [
             -1.0, 1.0, 0.0, 1.0,  # Top-left
-             1.0, 1.0, 1.0, 1.0,  # Top-right
-             1.0,-1.0, 1.0, 0.0,  # Bottom-right
-            -1.0,-1.0, 0.0, 0.0   # Bottom-left
+            1.0, 1.0, 1.0, 1.0,  # Top-right
+            1.0, -1.0, 1.0, 0.0,  # Bottom-right
+            -1.0, -1.0, 0.0, 0.0   # Bottom-left
         ]
+        
         # Create VAO and VBO
         self.vao = create_vao()
         self.vbo = create_buffer(vertices)
@@ -64,7 +80,6 @@ class Background:
         glEnableVertexAttribArray(1)
         glBindBuffer(GL_ARRAY_BUFFER, 0)
         glBindVertexArray(0)
-        self.texture_id = self.load_image_as_texture("PNGs/Background.png")
 
     def load_image_as_texture(self, image_path):
         img = Image.open(image_path)
