@@ -20,7 +20,7 @@ def main():
     if not window:
         glfw.terminate()
         return
-
+    glfw.window_hint(glfw.DOUBLEBUFFER, True)
     glfw.make_context_current(window)
     glfw.swap_interval(1)
 
@@ -43,7 +43,7 @@ def main():
 
         sim.update()
         sim.render()
-
+        
         glfw.swap_buffers(window)
         glfw.poll_events()  # Poll for events
 

@@ -99,10 +99,10 @@ class Simulation:
                 r, g, b = p.colour
                 firework_data.extend([normalized_x, normalized_y, r, g, b, 1.0])
 
-        # Update VBO for fireworks
-        glBindBuffer(GL_ARRAY_BUFFER, self.firework_vbo)
-        glBufferData(GL_ARRAY_BUFFER, np.array(firework_data, dtype=np.float32), GL_DYNAMIC_DRAW)
-        glBindBuffer(GL_ARRAY_BUFFER, 0)
+            # Update VBO for fireworks
+            glBindBuffer(GL_ARRAY_BUFFER, self.firework_vbo)
+            glBufferData(GL_ARRAY_BUFFER, np.array(firework_data, dtype=np.float32), GL_DYNAMIC_DRAW)
+            glBindBuffer(GL_ARRAY_BUFFER, 0)
 
 
     def render_fireworks(self):
@@ -123,8 +123,10 @@ class Simulation:
 
     def render(self):
         # Clear the color buffer with a black background
+        # Clear the color and depth buffers
         glClearColor(0.0, 0.0, 0.0, 1.0)
-        glClear(GL_COLOR_BUFFER_BIT)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
 
         # Render the background
         self.background.render()
@@ -136,5 +138,4 @@ class Simulation:
         if (len(self.flame_particles) + len(self.smoke_particles)) != 0:
         # Render flame and smoke particles
             self.render_particles()
-
-
+            
