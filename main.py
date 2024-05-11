@@ -10,8 +10,13 @@ def main():
     scaling_factor = 2  # Each grid cell maps to `scaling_factor x scaling_factor` pixels
     grid_width = x_window // scaling_factor
     grid_height = y_window // scaling_factor
+    
+    glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
+    glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
+    glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
+    glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, GL_TRUE)  # Needed on macOS
 
-    window = glfw.create_window(x_window, y_window, "Fixel", None, None)
+    window = glfw.create_window(x_window, y_window, "Firework Pixels", None, None)
     if not window:
         glfw.terminate()
         return
@@ -37,12 +42,7 @@ def main():
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)  # Set blending function
 
         sim.update()
-
-        # Set the colour to white before rendering the simulation
-        glColor3f(1.0, 1.0, 1.0)
         sim.render()
-
-        glDisable(GL_BLEND)  # Disable blending after rendering
 
         glfw.swap_buffers(window)
         glfw.poll_events()  # Poll for events

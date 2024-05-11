@@ -1,21 +1,30 @@
 from OpenGL.GL import *
+import random
 from grid import Grid
 from firework import Firework
 from background import Background
-import random
 from particle import FlameParticle, SmokeParticle
+from gl_utils import *
 
 
 class Simulation:
     def __init__(self, width, height, scaling_factor):
         self.width = width
         self.height = height
+        self.scaling_factor = scaling_factor  # Grid to window size ratio
         self.grid = Grid(width, height)
+        self.background = Background(width, height)
+        
+        self.particle_shader_program = create_shader_program("particle_vertex_shader.glsl", "particle_fragment_shader.glsl")
+        
         self.fireworks = []
         self.flame_particles = []
         self.smoke_particles = []
-        self.scaling_factor = scaling_factor  # Grid to window size ratio
-        self.background = Background(width, height)
+        
+        self.particle_vao = create_vao()
+        self.particle_vbo = create_buffer([])  # Initially empty
+        
+        self.update_particle_buffers()  # Initialize buffer data
 
     def launch_firework(self, x, y):
         self.fireworks.append(Firework(x, y))
@@ -39,50 +48,42 @@ class Simulation:
             self.flame_particles.append(FlameParticle(fire_x, fire_y))
             self.smoke_particles.append(SmokeParticle(fire_x, fire_y))
 
+    def update_particle_buffers(self):
+        particle_data = []
+        for p in self.flame_particles + self.smoke_particles:
+            normalized_x = p.x * 2 / self.width - 1
+            normalized_y = 1 - p.y * 2 / self.height
+            r, g, b = p.colour
+            a = 1 - p.lifespan / 100.0
+            particle_data.extend([normalized_x, normalized_y, r, g, b, a])
+
+        # Update VBO data
+        glBindBuffer(GL_ARRAY_BUFFER, self.particle_vbo)
+        glBufferData(GL_ARRAY_BUFFER, np.array(particle_data, dtype=np.float32), GL_STATIC_DRAW)
+
+        # Setup VAO attributes
+        glBindVertexArray(self.particle_vao)
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 24, ctypes.c_void_p(0))
+        glEnableVertexAttribArray(0)
+        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 24, ctypes.c_void_p(8))
+        glEnableVertexAttribArray(1)
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
+        glBindVertexArray(0)
+
+    def render_particles(self):
+        glUseProgram(self.particle_shader_program)
+        glBindVertexArray(self.particle_vao)
+        glDrawArrays(GL_POINTS, 0, len(self.flame_particles + self.smoke_particles))
+        glBindVertexArray(0)
+        glUseProgram(0)
+
     def render(self):
         # Clear the colour buffer with a black background
         glClearColor(0.0, 0.0, 0.0, 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
 
-        # Render the background first
-        self.render_background()
-        # Render fire and smoke particles
-        self.render_particles()
-        # Set point size for fireworks
-        glPointSize(self.scaling_factor * 2)
-
-        # Draw points
-        glBegin(GL_POINTS)
-        for fw in self.fireworks:
-            if not fw.is_exploded:
-                # Render active fireworks as white points
-                glColor3f(1.0, 1.0, 1.0)
-                glVertex2f(fw.x * 2 / self.grid.width - 1, 1 - fw.y * 2 / self.grid.height)
-            for p in fw.particles:
-                # Render particles with their colours
-                glColor3f(((p.colour >> 16) & 0xFF) / 255.0, ((p.colour >> 8) & 0xFF) / 255.0, (p.colour & 0xFF) / 255.0)
-                glVertex2f(p.x * 2 / self.grid.width - 1, 1 - p.y * 2 / self.grid.height)
-        glEnd()
-        
-    def render_particles(self):
-        # Render flame and smoke particles
-        glBegin(GL_POINTS)
-        for p in self.flame_particles + self.smoke_particles:
-            glColor4f(*p.colour, 1 - p.lifespan / 100.0)
-            glVertex2f(p.x * 2 / self.grid.width - 1, 1 - p.y * 2 / self.grid.height)
-        glEnd()
-
-    def render_background(self):
-        # Use orthogonal projection for background rendering
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        glOrtho(-1, 1, -1, 1, -1, 1)
-        glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()
-
-        # Disable depth testing and texturing
-        glDisable(GL_DEPTH_TEST)
-        glDisable(GL_TEXTURE_2D)
-
-        # Render the background
+        # Render the background and particles
         self.background.render()
+        self.render_particles()
+
+

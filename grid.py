@@ -2,7 +2,11 @@ class Grid:
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.cells = [[0 for _ in range(height)] for _ in range(width)]
+        self.cells = []
+        # Init 2D array
+        for _ in range(width):
+            row = [0] * height
+            self.cells.append(row)
 
     def set_cell(self, x, y, value):
         if 0 <= x < self.width and 0 <= y < self.height:
@@ -14,4 +18,6 @@ class Grid:
         return None
 
     def clear(self):
-        self.cells = [[0 for _ in range(self.height)] for _ in range(self.width)]
+        for x in range(self.width):
+            for y in range(self.height):
+                self.cells[x][y] = 0
