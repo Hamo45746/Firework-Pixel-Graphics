@@ -99,10 +99,10 @@ class Simulation:
                 r, g, b = p.colour
                 firework_data.extend([normalized_x, normalized_y, r, g, b, 1.0])
 
-            # Update VBO for fireworks
-            glBindBuffer(GL_ARRAY_BUFFER, self.firework_vbo)
-            glBufferData(GL_ARRAY_BUFFER, np.array(firework_data, dtype=np.float32), GL_DYNAMIC_DRAW)
-            glBindBuffer(GL_ARRAY_BUFFER, 0)
+        # Update VBO for fireworks
+        glBindBuffer(GL_ARRAY_BUFFER, self.firework_vbo)
+        glBufferData(GL_ARRAY_BUFFER, np.array(firework_data, dtype=np.float32), GL_DYNAMIC_DRAW)
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
 
 
     def render_fireworks(self):
