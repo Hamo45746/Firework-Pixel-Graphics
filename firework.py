@@ -23,7 +23,10 @@ class Firework:
     def explode(self):
         num_particles = 60
         spread = 0.7
-        colour = random.randint(1, 0xFFFFFF)  # Random colour
+        r = random.uniform(0, 1)
+        g = random.uniform(0, 1)
+        b = random.uniform(0, 1)
+        colour = (r,g,b)
         
         for _ in range(num_particles):
             angle = random.uniform(0, 2 * math.pi)  # Angle between 0 and 360 degrees

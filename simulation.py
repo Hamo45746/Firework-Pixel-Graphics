@@ -16,19 +16,33 @@ class Simulation:
         self.background = Background(width, height)
         
         self.particle_shader_program = create_shader_program("particle_vertex_shader.glsl", "particle_fragment_shader.glsl")
-        self.point_size_location = glGetUniformLocation(self.particle_shader_program, "point_size")
+        self.scaling_factor_location = glGetUniformLocation(self.particle_shader_program, "scaling_factor")
         
         self.fireworks = []
         self.flame_particles = []
         self.smoke_particles = []
         
-        self.particle_vao = create_vao()
-        self.particle_vbo = create_buffer([])  # Initially empty
         self.firework_vao = create_vao()
-        self.firework_vbo = create_buffer([])
+        self.firework_vbo = create_buffer(np.zeros(1, dtype=np.float32))
+        glBindVertexArray(self.firework_vao)
+        glBindBuffer(GL_ARRAY_BUFFER, self.firework_vbo)
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 24, ctypes.c_void_p(0))
+        glEnableVertexAttribArray(0)
+        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 24, ctypes.c_void_p(8))
+        glEnableVertexAttribArray(1)
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
+        glBindVertexArray(0)
         
-        self.update_particle_buffers()  # Initialize buffer data
-        self.update_firework_buffers()
+        self.particle_vao = create_vao()
+        self.particle_vbo = create_buffer(np.zeros(1, dtype=np.float32))
+        glBindVertexArray(self.particle_vao)
+        glBindBuffer(GL_ARRAY_BUFFER, self.particle_vbo)
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 24, ctypes.c_void_p(0))
+        glEnableVertexAttribArray(0)
+        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 24, ctypes.c_void_p(8))
+        glEnableVertexAttribArray(1)
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
+        glBindVertexArray(0)
 
     def launch_firework(self, x, y):
         self.fireworks.append(Firework(x, y))
@@ -65,16 +79,8 @@ class Simulation:
 
         # Update VBO data
         glBindBuffer(GL_ARRAY_BUFFER, self.particle_vbo)
-        glBufferData(GL_ARRAY_BUFFER, np.array(particle_data, dtype=np.float32), GL_STATIC_DRAW)
-
-        # Setup VAO attributes
-        glBindVertexArray(self.particle_vao)
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 24, ctypes.c_void_p(0))
-        glEnableVertexAttribArray(0)
-        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 24, ctypes.c_void_p(8))
-        glEnableVertexAttribArray(1)
+        glBufferData(GL_ARRAY_BUFFER, np.array(particle_data, dtype=np.float32), GL_DYNAMIC_DRAW)
         glBindBuffer(GL_ARRAY_BUFFER, 0)
-        glBindVertexArray(0)
         
     def update_firework_buffers(self):
         firework_data = []
@@ -83,29 +89,19 @@ class Simulation:
                 x = p.x
                 y = p.y
                 normalized_x = x * 2 / self.width - 1
-        
                 normalized_y = 1 - y * 2 / self.height
-                r = (p.colour >> 16) & 0xFF
-                g = (p.colour >> 8) & 0xFF
-                b = p.colour & 0xFF
+                r, g, b = p.colour
                 firework_data.extend([normalized_x, normalized_y, r, g, b, 1.0])
 
         # Update VBO for fireworks
         glBindBuffer(GL_ARRAY_BUFFER, self.firework_vbo)
-        glBufferData(GL_ARRAY_BUFFER, np.array(firework_data, dtype=np.float32), GL_STATIC_DRAW)
-        # setup VAO
-        glBindVertexArray(self.firework_vao)
-        glBindBuffer(GL_ARRAY_BUFFER, self.firework_vbo)
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 24, ctypes.c_void_p(0))
-        glEnableVertexAttribArray(0)
-        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 24, ctypes.c_void_p(8))
-        glEnableVertexAttribArray(1)
+        glBufferData(GL_ARRAY_BUFFER, np.array(firework_data, dtype=np.float32), GL_DYNAMIC_DRAW)
         glBindBuffer(GL_ARRAY_BUFFER, 0)
-        glBindVertexArray(0)
+
 
     def render_fireworks(self):
         glUseProgram(self.particle_shader_program)
-        glUniform1f(self.point_size_location, self.scaling_factor)  # Set point size uniform
+        glUniform1f(self.scaling_factor_location, self.scaling_factor)
         glBindVertexArray(self.firework_vao)
         glDrawArrays(GL_POINTS, 0, len(self.fireworks) * len(self.fireworks[0].particles))
         glBindVertexArray(0)
@@ -113,7 +109,7 @@ class Simulation:
 
     def render_particles(self):
         glUseProgram(self.particle_shader_program)
-        glUniform1f(self.point_size_location, self.scaling_factor)  # Set point size uniform
+        glUniform1f(self.scaling_factor_location, self.scaling_factor)
         glBindVertexArray(self.particle_vao)
         glDrawArrays(GL_POINTS, 0, len(self.flame_particles + self.smoke_particles))
         glBindVertexArray(0)
@@ -131,7 +127,7 @@ class Simulation:
         # Render firework particles
             self.render_fireworks()
 
-        if len(self.flame_particles) + len(self.smoke_particles) != 0:
+        if (len(self.flame_particles) + len(self.smoke_particles)) != 0:
         # Render flame and smoke particles
             self.render_particles()
 
