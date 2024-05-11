@@ -17,6 +17,7 @@ class Simulation:
         
         self.particle_shader_program = create_shader_program("particle_vertex_shader.glsl", "particle_fragment_shader.glsl")
         self.scaling_factor_location = glGetUniformLocation(self.particle_shader_program, "scaling_factor")
+
         
         self.fireworks = []
         self.flame_particles = []
