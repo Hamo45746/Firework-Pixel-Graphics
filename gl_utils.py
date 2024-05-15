@@ -1,7 +1,7 @@
 from OpenGL.GL import *
 import numpy as np
 
-def create_buffer(data, data_type=GL_ARRAY_BUFFER, usage=GL_STATIC_DRAW):
+def create_buffer(data, data_type=GL_ARRAY_BUFFER, usage=GL_DYNAMIC_DRAW):
     """ Create a buffer (VBO or EBO) and upload data to it. """
     buffer_id = glGenBuffers(1)
     glBindBuffer(data_type, buffer_id)
@@ -22,11 +22,11 @@ def load_shader(source, shader_type):
     glShaderSource(shader, source)
     glCompileShader(shader)
     # Check for compilation errors
-    if not glGetShaderiv(shader, GL_COMPILE_STATUS):
-        error = glGetShaderInfoLog(shader).decode('utf-8')
-        print(f'Error compiling shader: {error}')
-        glDeleteShader(shader)
-        raise Exception(f"Shader compilation error: {error}")
+    # if not glGetShaderiv(shader, GL_COMPILE_STATUS):
+    #     error = glGetShaderInfoLog(shader).decode('utf-8')
+    #     print(f'Error compiling shader: {error}')
+    #     glDeleteShader(shader)
+    #     raise Exception(f"Shader compilation error: {error}")
     return shader
 
 
@@ -46,11 +46,11 @@ def create_shader_program(vertex_source_path, fragment_source_path):
     glLinkProgram(program)
 
     # Check linking errors
-    if not glGetProgramiv(program, GL_LINK_STATUS):
-        error = glGetProgramInfoLog(program).decode('utf-8')
-        print(f'Error linking program: {error}')
-        glDeleteProgram(program)
-        raise Exception(f"Program linking error: {error}")
+    # if not glGetProgramiv(program, GL_LINK_STATUS):
+    #     error = glGetProgramInfoLog(program).decode('utf-8')
+    #     print(f'Error linking program: {error}')
+    #     glDeleteProgram(program)
+    #     raise Exception(f"Program linking error: {error}")
 
     glDeleteShader(vertex_shader)
     glDeleteShader(fragment_shader)

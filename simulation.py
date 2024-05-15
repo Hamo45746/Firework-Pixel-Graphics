@@ -109,7 +109,13 @@ class Simulation:
         glUseProgram(self.particle_shader_program)
         glPointSize(self.scaling_factor * 2)
         glBindVertexArray(self.firework_vao)
-        glDrawArrays(GL_POINTS, 0, len(self.fireworks) * len(self.fireworks[0].particles))
+        num_particles = 0
+        for fw in self.fireworks:
+            if fw.is_exploded:
+                num_particles += len(fw.particles)
+            else:
+                num_particles += 1
+        glDrawArrays(GL_POINTS, 0, num_particles)
         glBindVertexArray(0)
         glUseProgram(0)
 
@@ -117,7 +123,7 @@ class Simulation:
         glUseProgram(self.particle_shader_program)
         glPointSize(self.scaling_factor * 2)
         glBindVertexArray(self.particle_vao)
-        glDrawArrays(GL_POINTS, 0, len(self.flame_particles + self.smoke_particles))
+        glDrawArrays(GL_POINTS, 0, len(self.flame_particles) + len(self.smoke_particles))
         glBindVertexArray(0)
         glUseProgram(0)
 
@@ -127,14 +133,13 @@ class Simulation:
         glClearColor(0.0, 0.0, 0.0, 1.0)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-
         # Render the background
         self.background.render()
 
         if len(self.fireworks) != 0:
         # Render firework particles
             self.render_fireworks()
-
+        
         if (len(self.flame_particles) + len(self.smoke_particles)) != 0:
         # Render flame and smoke particles
             self.render_particles()
