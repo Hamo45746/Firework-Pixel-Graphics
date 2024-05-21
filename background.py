@@ -7,12 +7,14 @@ class Background:
     def __init__(self, width, height):
         self.width = width
         self.height = height
+        self.background_width = 2.5 * self.width
         self.grid = self.create_background()
         self.texture_id = None
         self.additional_textures = []
-        self.shader_program = create_shader_program("background_vertex_shader.glsl", "background_fragment_shader.glsl")
-        self.translation_location = glGetUniformLocation(self.shader_program, 'translation')
-        self.scale_location = glGetUniformLocation(self.shader_program, 'scale')
+        self.scroll_position = 0
+        self.shader_program = create_shader_program("Shaders/background_vertex_shader.glsl", "Shaders/background_fragment_shader.glsl")
+        #self.translation_location = glGetUniformLocation(self.shader_program, 'translation')
+        #self.scale_location = glGetUniformLocation(self.shader_program, 'scale')
 
         self.setup_texture()
         self.load_additional_textures()
@@ -49,8 +51,8 @@ class Background:
         # Convert grid data to a suitable format for OpenGL texture
         data = []
         for row in self.grid:
-            for color in row:
-                data.extend([int(c * 255) for c in color])
+            for colour in row:
+                data.extend([int(c * 255) for c in colour])
         data = bytes(data)
 
         # Generate and bind texture
@@ -63,10 +65,10 @@ class Background:
 
         # Vertices for a full-screen quad with texture coordinates
         vertices = [
-            -1.0, 1.0, 0.0, 1.0,  # Top-left
-            1.0, 1.0, 1.0, 1.0,  # Top-right
-            1.0, -1.0, 1.0, 0.0,  # Bottom-right
-            -1.0, -1.0, 0.0, 0.0   # Bottom-left
+            -2.3, 1.0, 0.0, 1.0,  # Top-left
+            2.3, 1.0, 1.0, 1.0,  # Top-right
+            2.3, -1.0, 1.0, 0.0,  # Bottom-right
+            -2.3, -1.0, 0.0, 0.0   # Bottom-left
         ]
         
         # Create VAO and VBO
@@ -126,21 +128,20 @@ class Background:
         for texture_info in self.additional_textures:
             texture_id, position, scale = texture_info
 
-            # Activate the texture unit first
+            tex_left = self.scroll_position / self.width
+            tex_right = (self.scroll_position + self.width) / self.width
+
             glActiveTexture(GL_TEXTURE0)
             glBindTexture(GL_TEXTURE_2D, texture_id)
-
-            # Apply the translation and scale uniforms
-            glUniform2f(self.translation_location, *position)  # Unpack position tuple directly
-            glUniform2f(self.scale_location, scale, scale)  # Apply scale uniformly
-
-            # Draw the textured quad
+            glUniform1f(glGetUniformLocation(self.shader_program, "scroll_position"), self.scroll_position)
+            glUniform1f(glGetUniformLocation(self.shader_program, "tex_left"), tex_left)
+            glUniform1f(glGetUniformLocation(self.shader_program, "tex_right"), tex_right)
             glDrawArrays(GL_TRIANGLE_FAN, 0, 4)
-
-            # Unbind the texture
             glBindTexture(GL_TEXTURE_2D, 0)
 
         glBindVertexArray(0)
         glUseProgram(0)
         glDisable(GL_BLEND)
 
+    def update_scroll_pos(self, new_scroll_pos):
+        self.scroll_position = new_scroll_pos

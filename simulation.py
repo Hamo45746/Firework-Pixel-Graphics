@@ -14,8 +14,9 @@ class Simulation:
         self.scaling_factor = scaling_factor  # Grid to window size ratio
         self.grid = Grid(width, height)
         self.background = Background(width, height)
+        self.scroll_position = 0
         
-        self.particle_shader_program = create_shader_program("particle_vertex_shader.glsl", "particle_fragment_shader.glsl")
+        self.particle_shader_program = create_shader_program("Shaders/particle_vertex_shader.glsl", "Shaders/particle_fragment_shader.glsl")
         
         self.fireworks = []
         self.flame_particles = []
@@ -60,8 +61,8 @@ class Simulation:
         self.update_particle_buffers()
 
     def emit_flame_and_smoke(self):
-        # Position where the fire is
-        fire_x = random.uniform(114, 121)
+        # Position where the fire is.
+        fire_x = random.uniform(114 - (self.scroll_position * 2.3), 121 - (self.scroll_position * 2.3))
         fire_y = random.uniform(113, 123)
         if random.random() < 0.1:  # Control the emission rate
             self.flame_particles.append(FlameParticle(fire_x, fire_y))
@@ -128,7 +129,6 @@ class Simulation:
         glUseProgram(0)
 
     def render(self):
-        # Clear the color buffer with a black background
         # Clear the color and depth buffers
         glClearColor(0.0, 0.0, 0.0, 1.0)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -143,4 +143,3 @@ class Simulation:
         if (len(self.flame_particles) + len(self.smoke_particles)) != 0:
         # Render flame and smoke particles
             self.render_particles()
-            
