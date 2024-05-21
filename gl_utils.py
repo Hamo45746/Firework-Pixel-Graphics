@@ -55,3 +55,34 @@ def create_shader_program(vertex_source_path, fragment_source_path):
     glDeleteShader(vertex_shader)
     glDeleteShader(fragment_shader)
     return program
+
+def create_quad_vao():
+    quad_vertices = np.array([
+        # positions     # texture coords
+        -1.0,  1.0,      0.0, 1.0,
+        -1.0, -1.0,      0.0, 0.0,
+         1.0, -1.0,      1.0, 0.0,
+         1.0,  1.0,      1.0, 1.0,
+    ], dtype=np.float32)
+
+    indices = np.array([0, 1, 2, 2, 3, 0], dtype=np.uint32)
+
+    vao = create_vao()
+    vbo = create_buffer(quad_vertices, GL_ARRAY_BUFFER, GL_STATIC_DRAW)
+    ebo = create_buffer(indices, GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW)
+
+    glBindVertexArray(vao)
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo)
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * quad_vertices.itemsize, ctypes.c_void_p(0))
+    glEnableVertexAttribArray(0)
+
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * quad_vertices.itemsize, ctypes.c_void_p(2 * quad_vertices.itemsize))
+    glEnableVertexAttribArray(1)
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo)
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0)
+    glBindVertexArray(0)
+
+    return vao
