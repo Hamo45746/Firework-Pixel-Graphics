@@ -105,11 +105,13 @@ class Simulation:
         glBufferData(GL_ARRAY_BUFFER, np.array(firework_data, dtype=np.float32), GL_DYNAMIC_DRAW)
         glBindBuffer(GL_ARRAY_BUFFER, 0)
 
-
     def render_fireworks(self):
         glUseProgram(self.particle_shader_program)
+        glUniform1f(glGetUniformLocation(self.particle_shader_program, "scroll_position"), self.scroll_position)
+        glUniform2f(glGetUniformLocation(self.particle_shader_program, "screenSize"), self.width, self.height)
         glPointSize(self.scaling_factor * 2)
         glBindVertexArray(self.firework_vao)
+        
         num_particles = 0
         for fw in self.fireworks:
             if fw.is_exploded:
@@ -120,8 +122,11 @@ class Simulation:
         glBindVertexArray(0)
         glUseProgram(0)
 
+
     def render_particles(self):
         glUseProgram(self.particle_shader_program)
+        glUniform1f(glGetUniformLocation(self.particle_shader_program, "scroll_position"), self.scroll_position)
+        glUniform2f(glGetUniformLocation(self.particle_shader_program, "screenSize"), self.width, self.height)
         glPointSize(self.scaling_factor * 2)
         glBindVertexArray(self.particle_vao)
         glDrawArrays(GL_POINTS, 0, len(self.flame_particles) + len(self.smoke_particles))

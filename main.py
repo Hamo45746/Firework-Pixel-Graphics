@@ -55,11 +55,11 @@ def main():
 
     sim = Simulation(grid_width, grid_height, scaling_factor)
 
-    # Create a framebuffer object (FBO) for off-screen rendering
+    # Create a framebuffer for off-screen rendering
     fbo = glGenFramebuffers(1)
     glBindFramebuffer(GL_FRAMEBUFFER, fbo)
     
-    # Create a texture to store the rendered image
+    # Create texture to store the image
     frame_texture = glGenTextures(1)
     glBindTexture(GL_TEXTURE_2D, frame_texture)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x_window * 2, y_window * 2, 0, GL_RGB, GL_UNSIGNED_BYTE, None)
@@ -95,35 +95,43 @@ def main():
         glBindFramebuffer(GL_FRAMEBUFFER, fbo)
         glViewport(0, 0, x_window * 2, y_window * 2)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        
         sim.update()
         sim.render()
-        
-        #Capture the frame
-        # if frame_count < max_frames:
-        #     buffer = glReadPixels(0, 0, x_window * 2, y_window * 2, GL_RGB, GL_UNSIGNED_BYTE)
-        #     image = Image.frombytes("RGB", (x_window * 2, y_window * 2), buffer)
-        #     image = image.transpose(Image.FLIP_TOP_BOTTOM)
-        #     image.save(f"Captures/frame_{frame_count:04d}.png")
-        #     frame_count += 1
             
-        # Render the framebuffer texture to the screen
+       # Post-process
+        glUseProgram(quad_shader_program)
+        glUniform1i(glGetUniformLocation(quad_shader_program, "screenTexture"), 0)
+        glUniform1f(glGetUniformLocation(quad_shader_program, "time"), glfw.get_time())
+
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_2D, frame_texture)
+        
+        # Render framebuffer texture to screen
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
         glViewport(0, 0, x_window * 2, y_window * 2)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         glUseProgram(quad_shader_program)
         glBindVertexArray(quad_vao)
-        glBindTexture(GL_TEXTURE_2D, frame_texture)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, None)
-        glBindTexture(GL_TEXTURE_2D, 0)
+        
+        # Capture the frame
+        # if frame_count < max_frames:
+        #     buffer = glReadPixels(0, 0, x_window * 2, y_window * 2, GL_RGB, GL_UNSIGNED_BYTE)
+        #     image = Image.frombytes("RGB", (x_window * 2, y_window * 2), buffer)
+        #     image = image.transpose(Image.FLIP_TOP_BOTTOM)
+        #     image.save(f"Captures/frame_{frame_count:04d}.png")
+        #     frame_count += 1
+        
         glBindVertexArray(0)
         glUseProgram(0)
         
         glfw.swap_buffers(window)
-        glfw.poll_events()  # Poll for events
+        glfw.poll_events()
 
     # Create video of window on exit
-    create_video("Captures", "Sim_2")
+    create_video("Captures", "Post-process-1")
     glfw.terminate()
 
 if __name__ == "__main__":
