@@ -2,6 +2,7 @@ import glfw
 from OpenGL.GL import *
 import numpy as np
 from grid import Grid
+# import imageio
 
 def main():
     if not glfw.init():
@@ -11,14 +12,13 @@ def main():
     # Window dimensions
     x_window, y_window = 200, 150
     scaling_factor = 2
-    # Logical grid dimensions (smaller than the window)
+    # Logical grid dimensions
     grid_width = int(x_window / scaling_factor)
     grid_height = int(y_window / scaling_factor)
 
     window = glfw.create_window(x_window, y_window, "Fixel", None, None)
     if not window:
         glfw.terminate()
-        print("Failed to create GLFW window")
         return
 
     glfw.make_context_current(window)
@@ -34,6 +34,8 @@ def main():
     glPointSize(point_size)
 
     is_dragging = False
+    
+    # writer = imageio.get_writer('Captures/sand.mp4', fps=60)
 
     def on_mouse_button(window, button, action, mods):
         nonlocal is_dragging
@@ -49,7 +51,7 @@ def main():
             create_particle_at_mouse_pos(window)
 
     def create_particle_at_mouse_pos(window):
-        # Scale mouse coordinates to grid coordinates
+        # Scale mouse coords to grid coords
         x, y = glfw.get_cursor_pos(window)
         grid_x, grid_y = int(x * grid_width / x_window), int(y * grid_height / y_window)
         grid.set(grid_x, grid_y, np.random.randint(1, 0xFFFFFF))
@@ -61,9 +63,14 @@ def main():
         glfw.poll_events()
         grid.update()
 
+        # buffer = glReadPixels(0, 0, x_window * 2, y_window * 2, GL_RGB, GL_UNSIGNED_BYTE)
+        # image = np.frombuffer(buffer, dtype=np.uint8).reshape(y_window * 2, x_window * 2, 3)
+        # image = np.flip(image, axis=0)
+        # writer.append_data(image)
+
         glClear(GL_COLOR_BUFFER_BIT)
         glBegin(GL_POINTS)
-        # Adjust rendering to scale grid to window size
+        # scale grid to window size
         for y in range(grid.height):
             for x in range(grid.width):
                 colour = grid.grid[y * grid.width + x]
@@ -73,7 +80,7 @@ def main():
         glEnd()
 
         glfw.swap_buffers(window)
-
+    # writer.close()
     glfw.terminate()
 
 if __name__ == "__main__":
