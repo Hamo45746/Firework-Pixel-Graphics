@@ -17,6 +17,7 @@ def main():
     # fps = 60
     # duration = 10  # seconds
     # writer = imageio.get_writer('Captures/ModernGL_1.mp4', fps=fps)
+    # frame_count = 0
     
     glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
     glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
@@ -68,8 +69,6 @@ def main():
         sim.background.update_scroll_pos(sim.scroll_position)
 
     glfw.set_cursor_pos_callback(window, on_mouse_move)
-
-    # frame_count = 0
     
     while not glfw.window_should_close(window):
         glBindFramebuffer(GL_FRAMEBUFFER, fbo)
