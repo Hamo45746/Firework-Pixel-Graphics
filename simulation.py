@@ -107,8 +107,8 @@ class Simulation:
 
     def render_fireworks(self):
         glUseProgram(self.particle_shader_program)
-        glUniform1f(glGetUniformLocation(self.particle_shader_program, "scroll_position"), self.scroll_position)
-        glUniform2f(glGetUniformLocation(self.particle_shader_program, "screenSize"), self.width, self.height)
+        #glUniform1f(glGetUniformLocation(self.particle_shader_program, "scroll_position"), self.scroll_position)
+        #glUniform2f(glGetUniformLocation(self.particle_shader_program, "screenSize"), self.width, self.height)
         glPointSize(self.scaling_factor * 2)
         glBindVertexArray(self.firework_vao)
         
@@ -125,8 +125,8 @@ class Simulation:
 
     def render_particles(self):
         glUseProgram(self.particle_shader_program)
-        glUniform1f(glGetUniformLocation(self.particle_shader_program, "scroll_position"), self.scroll_position)
-        glUniform2f(glGetUniformLocation(self.particle_shader_program, "screenSize"), self.width, self.height)
+        #glUniform1f(glGetUniformLocation(self.particle_shader_program, "scroll_position"), self.scroll_position)
+        #glUniform2f(glGetUniformLocation(self.particle_shader_program, "screenSize"), self.width, self.height)
         glPointSize(self.scaling_factor * 2)
         glBindVertexArray(self.particle_vao)
         glDrawArrays(GL_POINTS, 0, len(self.flame_particles) + len(self.smoke_particles))
