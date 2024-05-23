@@ -1,12 +1,7 @@
 import glfw
 from OpenGL.GL import *
 from simulation import Simulation
-from PIL import Image
 from gl_utils import create_quad_vao, create_shader_program
-import os
-import imageio
-import numpy as np
-
 
 
 def main():
