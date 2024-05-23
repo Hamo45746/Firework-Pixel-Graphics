@@ -118,6 +118,7 @@ class Background:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
         glBindTexture(GL_TEXTURE_2D, 0)
+        # self.additional_textures.append((self.texture_id, (0,0), 1)) # This background grid texture doesn't work for a bunch of reasons
 
     def render(self):
         glEnable(GL_BLEND)
