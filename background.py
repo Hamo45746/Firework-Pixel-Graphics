@@ -13,7 +13,7 @@ class Background:
         self.load_additional_textures()
 
     def create_background(self):
-        # Initialise empty grid to represent the background scene
+        # Initialise empty array to represent the background scene
         grid = []
 
         ground_colours = [
@@ -79,14 +79,16 @@ class Background:
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glEnable(GL_TEXTURE_2D)
+        
         glBindTexture(GL_TEXTURE_2D, self.texture_id)
-        glBegin(GL_QUADS)
+        glBegin(GL_QUADS) # create quad
         glTexCoord2f(0, 0); glVertex2f(-1, 1)
         glTexCoord2f(1, 0); glVertex2f(1, 1)
         glTexCoord2f(1, 1); glVertex2f(1, -1)
         glTexCoord2f(0, 1); glVertex2f(-1, -1)
         glEnd()
         glBindTexture(GL_TEXTURE_2D, 0)
+        
         glEnable(GL_TEXTURE_2D)
         for texture, position, scale in self.additional_textures:
             glBindTexture(GL_TEXTURE_2D, texture[0])
@@ -98,7 +100,7 @@ class Background:
             glTexCoord2f(1, 1); glVertex2f(x + w, y + h)
             glTexCoord2f(0, 1); glVertex2f(x - w, y + h)
             glEnd()
-            glBindTexture(GL_TEXTURE_2D, 0)
+            glBindTexture(GL_TEXTURE_2D, 0) # Unbind
         glDisable(GL_TEXTURE_2D)
         glDisable(GL_BLEND)
         
