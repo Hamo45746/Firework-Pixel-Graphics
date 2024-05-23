@@ -21,12 +21,6 @@ def load_shader(source, shader_type):
     shader = glCreateShader(shader_type)
     glShaderSource(shader, source)
     glCompileShader(shader)
-    # Check for compilation errors
-    # if not glGetShaderiv(shader, GL_COMPILE_STATUS):
-    #     error = glGetShaderInfoLog(shader).decode('utf-8')
-    #     print(f'Error compiling shader: {error}')
-    #     glDeleteShader(shader)
-    #     raise Exception(f"Shader compilation error: {error}")
     return shader
 
 
@@ -44,13 +38,6 @@ def create_shader_program(vertex_source_path, fragment_source_path):
     glAttachShader(program, vertex_shader)
     glAttachShader(program, fragment_shader)
     glLinkProgram(program)
-
-    # Check linking errors
-    # if not glGetProgramiv(program, GL_LINK_STATUS):
-    #     error = glGetProgramInfoLog(program).decode('utf-8')
-    #     print(f'Error linking program: {error}')
-    #     glDeleteProgram(program)
-    #     raise Exception(f"Program linking error: {error}")
 
     glDeleteShader(vertex_shader)
     glDeleteShader(fragment_shader)
