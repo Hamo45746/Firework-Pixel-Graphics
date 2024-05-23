@@ -9,26 +9,6 @@ import numpy as np
 
 
 
-def create_video(frames_folder, output_name, fps=60, delete_frames=True):
-    # Get a list of PNG files in the frames folder
-    png_files = sorted([f for f in os.listdir(frames_folder) if f.endswith('.png')])
-    
-    # Create a list to store the frames
-    frames = []
-    
-    # Read the frames and append them to the list
-    for f in png_files:
-        frame = imageio.imread(os.path.join(frames_folder, f))
-        frames.append(frame)
-    
-    # Write the frames to the video
-    imageio.mimsave(f"{output_name}.mp4", frames, fps=fps)
-    
-    # delete the PNG files
-    if delete_frames:
-        for f in png_files:
-            os.remove(os.path.join(frames_folder, f))
-
 def main():
     if not glfw.init():
         return
