@@ -2,6 +2,9 @@ import glfw
 from OpenGL.GL import *
 from simulation import Simulation
 from gl_utils import create_quad_vao, create_shader_program
+from PIL import Image
+import numpy as np
+import imageio
 
 
 def main():
@@ -16,7 +19,7 @@ def main():
     # set up video
     # fps = 60
     # duration = 10  # seconds
-    # writer = imageio.get_writer('Captures/ModernGL_1.mp4', fps=fps)
+    # writer = imageio.get_writer('Captures/ModernGL_2_Move.mp4', fps=fps)
     # frame_count = 0
     
     glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
