@@ -7,7 +7,7 @@ class Background:
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.background_width = 2.5 * self.width
+        self.background_width = int(2.5 * self.width)
         self.grid = self.create_background()
         self.texture_id = None
         self.additional_textures = []
@@ -16,7 +16,6 @@ class Background:
         #self.translation_location = glGetUniformLocation(self.shader_program, 'translation')
         #self.scale_location = glGetUniformLocation(self.shader_program, 'scale')
 
-        self.setup_texture()
         self.load_additional_textures()
         self.setup_background()
 
@@ -35,40 +34,35 @@ class Background:
         for y in range(self.height):
             row = [] 
             # Determine if row in ground or sky
-            if y >= self.height * 3 // 4:
-                row = [random.choice(ground_colours) for _ in range(self.width)]
+            if y <= self.height * 1 // 12:
+                row = [random.choice(ground_colours) for _ in range(self.background_width)]
             else:
-                row = [(0, 0, 0)] * self.width
+                row = [(0, 0, 0)] * self.background_width
             grid.append(row)
-        for _ in range(100):
+        for _ in range(250):
             # Generate random coordinates for stars
-            x = random.randint(0, self.width - 1)
+            x = random.randint(0, self.background_width - 1)
             y = random.randint(0, self.height * 3 // 4 - 1)
             grid[y][x] = (1, 1, 1)  # Note reversal of x and y for indexing
         return grid
     
     def setup_background(self):
-        # Convert grid data to a suitable format for OpenGL texture
-        data = []
-        for row in self.grid:
-            for colour in row:
-                data.extend([int(c * 255) for c in colour])
-        data = bytes(data)
-
-        # Generate and bind texture
-        self.texture_id = glGenTextures(1)
-        glBindTexture(GL_TEXTURE_2D, self.texture_id)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.width, self.height, 0, GL_RGB, GL_UNSIGNED_BYTE, data)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-        glBindTexture(GL_TEXTURE_2D, 0)
+        # Generate first background texture - not working
+        self.setup_texture()
 
         # Vertices for a full-screen quad with texture coordinates
-        vertices = [
+        vertices = [ # account for horizontal scaling to allow panning
             -2.3, 1.0, 0.0, 1.0,  # Top-left
             2.3, 1.0, 1.0, 1.0,  # Top-right
             2.3, -1.0, 1.0, 0.0,  # Bottom-right
             -2.3, -1.0, 0.0, 0.0   # Bottom-left
+        ]
+        
+        first_back_vertices = [
+            -1, 1.0, 0.0, 1.0,  # Top-left
+            1, 1.0, 1.0, 1.0,  # Top-right
+            1, -1.0, 1.0, 0.0,  # Bottom-right
+            -1, -1.0, 0.0, 0.0   # Bottom-left
         ]
         
         # Create VAO and VBO
@@ -76,6 +70,18 @@ class Background:
         self.vbo = create_buffer(vertices)
         glBindVertexArray(self.vao)
         glBindBuffer(GL_ARRAY_BUFFER, self.vbo)
+        glVertexAttribPointer(0, 2, GL_FLOAT, False, 4 * 4, ctypes.c_void_p(0))
+        glEnableVertexAttribArray(0)
+        glVertexAttribPointer(1, 2, GL_FLOAT, False, 4 * 4, ctypes.c_void_p(2 * 4))
+        glEnableVertexAttribArray(1)
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
+        glBindVertexArray(0)
+        
+        # Create VAO and VBO for grid background
+        self.grid_back_vao = create_vao()
+        self.grid_back_vbo = create_buffer(first_back_vertices)
+        glBindVertexArray(self.grid_back_vao)
+        glBindBuffer(GL_ARRAY_BUFFER, self.grid_back_vbo)
         glVertexAttribPointer(0, 2, GL_FLOAT, False, 4 * 4, ctypes.c_void_p(0))
         glEnableVertexAttribArray(0)
         glVertexAttribPointer(1, 2, GL_FLOAT, False, 4 * 4, ctypes.c_void_p(2 * 4))
@@ -117,12 +123,22 @@ class Background:
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.width, self.height, 0, GL_RGB, GL_UNSIGNED_BYTE, data)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        # self.additional_textures.append((self.texture_id, (0, 0), 1)) # This isn't working
         glBindTexture(GL_TEXTURE_2D, 0)
 
     def render(self):
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glUseProgram(self.shader_program)
+        
+        # render first background texture self.texture_id to its properly scaled vao
+        glBindVertexArray(self.grid_back_vao)
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_2D, self.texture_id)
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 4)
+        glBindTexture(GL_TEXTURE_2D, 0)
+        glBindVertexArray(0)
+        
         glBindVertexArray(self.vao)
 
         for texture_info in self.additional_textures:
