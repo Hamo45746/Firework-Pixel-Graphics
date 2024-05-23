@@ -40,26 +40,26 @@ class Simulation:
             self.smoke_particles.append(SmokeParticle(fire_x, fire_y))
 
     def render(self):
-        # Clear the colour buffer with a black background
+        # set colour buffer with black background
         glClearColor(0.0, 0.0, 0.0, 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
 
-        # Render the background first
+        #Render the background first
         self.render_background()
-        # Render fire and smoke particles
+        # Render campfire and smoke particles
         self.render_particles()
         # Set point size for fireworks
         glPointSize(self.scaling_factor * 2)
 
-        # Draw points
+        # render fireworks and their particles
         glBegin(GL_POINTS)
         for fw in self.fireworks:
             if not fw.is_exploded:
-                # Render active fireworks as white points
+                # Render active fireworks - white
                 glColor3f(1.0, 1.0, 1.0)
-                glVertex2f(fw.x * 2 / self.grid.width - 1, 1 - fw.y * 2 / self.grid.height)
+                glVertex2f(fw.x * 2 / self.grid.width - 1, 1 - fw.y * 2 / self.grid.height) #shortened from sand
             for p in fw.particles:
-                # Render particles with their colours
+                # Render fw particles
                 glColor3f(((p.colour >> 16) & 0xFF) / 255.0, ((p.colour >> 8) & 0xFF) / 255.0, (p.colour & 0xFF) / 255.0)
                 glVertex2f(p.x * 2 / self.grid.width - 1, 1 - p.y * 2 / self.grid.height)
         glEnd()
@@ -73,16 +73,16 @@ class Simulation:
         glEnd()
 
     def render_background(self):
-        # Use orthogonal projection for background rendering
+        # Use orthogonal projection for background
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         glOrtho(-1, 1, -1, 1, -1, 1)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 
-        # Disable depth testing and texturing
+        # disable stuff
         glDisable(GL_DEPTH_TEST)
         glDisable(GL_TEXTURE_2D)
 
-        # Render the background
+        # Render background
         self.background.render()

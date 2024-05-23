@@ -1,6 +1,8 @@
 import glfw
 from OpenGL.GL import *
 from simulation import Simulation
+# import imageio
+# import numpy as np
 
 def main():
     if not glfw.init():
@@ -10,6 +12,10 @@ def main():
     scaling_factor = 2  # Each grid cell maps to `scaling_factor x scaling_factor` pixels
     grid_width = x_window // scaling_factor
     grid_height = y_window // scaling_factor
+    
+    # fps = 60
+    # duration = 10  # seconds
+    # writer = imageio.get_writer('FW_Immediate_1.mp4', fps=fps)
 
     window = glfw.create_window(x_window, y_window, "Fixel", None, None)
     if not window:
@@ -30,6 +36,7 @@ def main():
 
     glfw.set_mouse_button_callback(window, on_mouse_button)
 
+    # frame_count = 0
     while not glfw.window_should_close(window):
         glClearColor(0.0, 0.0, 0.0, 1.0)  # Set the clear colour to black
         glClear(GL_COLOR_BUFFER_BIT)  # Clear the colour buffer
@@ -46,6 +53,18 @@ def main():
 
         glfw.swap_buffers(window)
         glfw.poll_events()  # Poll for events
+        
+        # capture frame for video
+        # buffer = glReadPixels(0, 0, x_window * 2, y_window * 2, GL_RGB, GL_UNSIGNED_BYTE)
+        # image = np.frombuffer(buffer, dtype=np.uint8).reshape((y_window * 2, x_window * 2, 3))  # convert bytes
+        # image = np.flipud(image)
+        # writer.append_data(image)
+
+    #     frame_count += 1
+    #     if frame_count >= fps * duration:
+    #         break
+
+    # writer.close()  # close video writer
 
     glfw.terminate()
 

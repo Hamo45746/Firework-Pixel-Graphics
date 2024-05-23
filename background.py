@@ -76,10 +76,11 @@ class Background:
         glBindTexture(GL_TEXTURE_2D, 0)
 
     def render(self):
-        glEnable(GL_BLEND)
+        glEnable(GL_BLEND) # allow blend
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glEnable(GL_TEXTURE_2D)
+        glEnable(GL_TEXTURE_2D) # allow texture rendering
         
+        # Star texture
         glBindTexture(GL_TEXTURE_2D, self.texture_id)
         glBegin(GL_QUADS) # create quad
         glTexCoord2f(0, 0); glVertex2f(-1, 1)
@@ -87,9 +88,8 @@ class Background:
         glTexCoord2f(1, 1); glVertex2f(1, -1)
         glTexCoord2f(0, 1); glVertex2f(-1, -1)
         glEnd()
-        glBindTexture(GL_TEXTURE_2D, 0)
-        
-        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, 0) #Unbind
+    
         for texture, position, scale in self.additional_textures:
             glBindTexture(GL_TEXTURE_2D, texture[0])
             glBegin(GL_QUADS)
