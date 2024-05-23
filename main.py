@@ -53,8 +53,9 @@ def main():
     def create_particle_at_mouse_pos(window):
         # Scale mouse coords to grid coords
         x, y = glfw.get_cursor_pos(window)
-        grid_x, grid_y = int(x * grid_width / x_window), int(y * grid_height / y_window)
-        grid.set(grid_x, grid_y, np.random.randint(1, 0xFFFFFF))
+        grid_x = int(x * grid_width / x_window)
+        grid_y = int(y * grid_height / y_window)
+        grid.set(grid_x, grid_y, np.random.randint(1, 0xFFFFFF)) # Colour
 
     glfw.set_mouse_button_callback(window, on_mouse_button)
     glfw.set_cursor_pos_callback(window, on_mouse_move)
@@ -75,8 +76,17 @@ def main():
             for x in range(grid.width):
                 colour = grid.grid[y * grid.width + x]
                 if colour != 0:
-                    glColor3f(((colour >> 16) & 0xFF) / 255.0, ((colour >> 8) & 0xFF) / 255.0, (colour & 0xFF) / 255.0)
-                    glVertex2f(x * 2 / grid_width - 1, 1 - y * 2 / grid_height)
+                    # Extract RGB values from integer
+                    r = ((colour >> 16) & 0xFF) / 255.0
+                    g = ((colour >> 8) & 0xFF) / 255.0
+                    b = (colour & 0xFF) / 255.0
+                    # Set the current colour for drawing
+                    glColor3f(r, g, b)
+                    # Calculate NDC for vertex positions
+                    ndc_x = x * 2 / grid.width - 1
+                    ndc_y = 1 - y * 2 / grid.height
+                    # Place vertex
+                    glVertex2f(ndc_x, ndc_y)
         glEnd()
 
         glfw.swap_buffers(window)
