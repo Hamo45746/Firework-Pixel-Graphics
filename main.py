@@ -69,7 +69,7 @@ def main():
         # image = np.flip(image, axis=0)
         # writer.append_data(image)
 
-        glClear(GL_COLOR_BUFFER_BIT)
+        glClear(GL_COLOR_BUFFER_BIT) # Set prev frame black
         glBegin(GL_POINTS)
         # scale grid to window size
         for y in range(grid.height):
