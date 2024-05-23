@@ -52,10 +52,10 @@ class Background:
 
         # Vertices for a full-screen quad with texture coordinates
         vertices = [ # account for horizontal scaling to allow panning
-            -2.3, 1.0, 0.0, 1.0,  # Top-left
-            2.3, 1.0, 1.0, 1.0,  # Top-right
-            2.3, -1.0, 1.0, 0.0,  # Bottom-right
-            -2.3, -1.0, 0.0, 0.0   # Bottom-left
+            -2.5, 1.0, 0.0, 1.0,  # Top-left
+            2.5, 1.0, 1.0, 1.0,  # Top-right
+            2.5, -1.0, 1.0, 0.0,  # Bottom-right
+            -2.5, -1.0, 0.0, 0.0   # Bottom-left
         ]
         
         first_back_vertices = [

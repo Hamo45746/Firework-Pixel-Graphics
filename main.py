@@ -5,6 +5,7 @@ from PIL import Image
 from gl_utils import create_quad_vao, create_shader_program
 import os
 import imageio
+import numpy as np
 
 
 
@@ -23,7 +24,7 @@ def create_video(frames_folder, output_name, fps=60, delete_frames=True):
     # Write the frames to the video
     imageio.mimsave(f"{output_name}.mp4", frames, fps=fps)
     
-    # Delete the PNG files if specified
+    # delete the PNG files
     if delete_frames:
         for f in png_files:
             os.remove(os.path.join(frames_folder, f))
@@ -37,8 +38,10 @@ def main():
     grid_width = int(x_window / scaling_factor)
     grid_height = int(y_window / scaling_factor)
     
-    frame_count = 0
-    max_frames = 500
+    # set up video
+    # fps = 60
+    # duration = 10  # seconds
+    # writer = imageio.get_writer('Captures/ModernGL_1.mp4', fps=fps)
     
     glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
     glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
@@ -91,6 +94,8 @@ def main():
 
     glfw.set_cursor_pos_callback(window, on_mouse_move)
 
+    # frame_count = 0
+    
     while not glfw.window_should_close(window):
         glBindFramebuffer(GL_FRAMEBUFFER, fbo)
         glViewport(0, 0, x_window * 2, y_window * 2)
@@ -98,14 +103,6 @@ def main():
         sim.update()
         sim.render()
         
-        #Capture the frame
-        # if frame_count < max_frames:
-        #     buffer = glReadPixels(0, 0, x_window * 2, y_window * 2, GL_RGB, GL_UNSIGNED_BYTE)
-        #     image = Image.frombytes("RGB", (x_window * 2, y_window * 2), buffer)
-        #     image = image.transpose(Image.FLIP_TOP_BOTTOM)
-        #     image.save(f"Captures/frame_{frame_count:04d}.png")
-        #     frame_count += 1
-            
         # Render the framebuffer texture to the screen
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
         glViewport(0, 0, x_window * 2, y_window * 2)
@@ -119,11 +116,21 @@ def main():
         glBindVertexArray(0)
         glUseProgram(0)
         
+        #Capture frame
+        # buffer = glReadPixels(0, 0, x_window * 2, y_window * 2, GL_RGB, GL_UNSIGNED_BYTE)
+        # image = Image.frombytes("RGB", (x_window * 2, y_window * 2), buffer)
+        # image = np.flipud(image) 
+        # writer.append_data(image)
+        
+        # frame_count += 1
+        # if frame_count >= fps * duration:
+        #     break
+        
         glfw.swap_buffers(window)
         glfw.poll_events()  # Poll for events
 
     # Create video of window on exit
-    create_video("Captures", "Sim_2")
+    # writer.close()
     glfw.terminate()
 
 if __name__ == "__main__":

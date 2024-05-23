@@ -62,7 +62,7 @@ class Simulation:
 
     def emit_flame_and_smoke(self):
         # Position where the fire is.
-        fire_x = random.uniform(114 - (self.scroll_position * 2.3), 121 - (self.scroll_position * 2.3))
+        fire_x = random.uniform(114 - (self.scroll_position * 2.5), 121 - (self.scroll_position * 2.5))
         fire_y = random.uniform(113, 123)
         if random.random() < 0.1:  # Control the emission rate
             self.flame_particles.append(FlameParticle(fire_x, fire_y))
