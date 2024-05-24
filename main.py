@@ -16,12 +16,6 @@ def main():
     grid_width = int(x_window / scaling_factor)
     grid_height = int(y_window / scaling_factor)
     
-    # set up video
-    # fps = 60
-    # duration = 10  # seconds
-    # writer = imageio.get_writer('Captures/ModernGL_2_Move.mp4', fps=fps)
-    # frame_count = 0
-    
     glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
     glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
     glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
@@ -37,11 +31,11 @@ def main():
 
     sim = Simulation(grid_width, grid_height, scaling_factor)
 
-    # Create a framebuffer object (FBO) for off-screen rendering
+    # create framebuffer object for off-screen rendering
     fbo = glGenFramebuffers(1)
     glBindFramebuffer(GL_FRAMEBUFFER, fbo)
     
-    # Create a texture to store the rendered image
+    # Create texture for rendered image
     frame_texture = glGenTextures(1)
     glBindTexture(GL_TEXTURE_2D, frame_texture)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x_window * 2, y_window * 2, 0, GL_RGB, GL_UNSIGNED_BYTE, None)
@@ -53,6 +47,12 @@ def main():
     
     quad_vao = create_quad_vao()
     quad_shader_program = create_shader_program("Shaders/quad_vertex_shader.glsl", "Shaders/quad_fragment_shader.glsl")
+    
+    # set up video
+    fps = 60
+    duration = 10  # seconds
+    writer = imageio.get_writer('Captures/ModernGL_2_Move.mp4', fps=fps)
+    frame_count = 0
 
     def on_mouse_button(window, button, action, mods):
         if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.PRESS:
@@ -94,20 +94,19 @@ def main():
         glUseProgram(0)
         
         #Capture frame
-        # buffer = glReadPixels(0, 0, x_window * 2, y_window * 2, GL_RGB, GL_UNSIGNED_BYTE)
-        # image = Image.frombytes("RGB", (x_window * 2, y_window * 2), buffer)
-        # image = np.flipud(image) 
-        # writer.append_data(image)
+        buffer = glReadPixels(0, 0, x_window * 2, y_window * 2, GL_RGB, GL_UNSIGNED_BYTE)
+        image = Image.frombytes("RGB", (x_window * 2, y_window * 2), buffer)
+        image = np.flipud(image) 
+        writer.append_data(image)
         
-        # frame_count += 1
-        # if frame_count >= fps * duration:
-        #     break
+        frame_count += 1
+        if frame_count >= fps * duration:
+            break
         
         glfw.swap_buffers(window)
         glfw.poll_events()  # Poll for events
 
-    # Create video of window on exit
-    # writer.close()
+    writer.close()
     glfw.terminate()
 
 if __name__ == "__main__":
