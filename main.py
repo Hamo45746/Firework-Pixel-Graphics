@@ -5,28 +5,8 @@ from PIL import Image
 from gl_utils import create_quad_vao, create_shader_program
 import os
 import imageio
+import numpy as np
 
-
-
-def create_video(frames_folder, output_name, fps=60, delete_frames=True):
-    # Get a list of PNG files in the frames folder
-    png_files = sorted([f for f in os.listdir(frames_folder) if f.endswith('.png')])
-    
-    # Create a list to store the frames
-    frames = []
-    
-    # Read the frames and append them to the list
-    for f in png_files:
-        frame = imageio.imread(os.path.join(frames_folder, f))
-        frames.append(frame)
-    
-    # Write the frames to the video
-    imageio.mimsave(f"{output_name}.mp4", frames, fps=fps)
-    
-    # Delete the PNG files if specified
-    if delete_frames:
-        for f in png_files:
-            os.remove(os.path.join(frames_folder, f))
 
 def main():
     if not glfw.init():
@@ -37,8 +17,11 @@ def main():
     grid_width = int(x_window / scaling_factor)
     grid_height = int(y_window / scaling_factor)
     
+    # set up video
+    fps = 60
+    duration = 10  # seconds
+    #writer = imageio.get_writer('', fps=fps)
     frame_count = 0
-    max_frames = 500
     
     glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
     glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
@@ -102,7 +85,7 @@ def main():
        # Post-process
         glUseProgram(quad_shader_program)
         glUniform1i(glGetUniformLocation(quad_shader_program, "screenTexture"), 0)
-        glUniform1f(glGetUniformLocation(quad_shader_program, "time"), glfw.get_time())
+        #glUniform1f(glGetUniformLocation(quad_shader_program, "time"), glfw.get_time())
 
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, frame_texture)
@@ -116,13 +99,15 @@ def main():
         glBindVertexArray(quad_vao)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, None)
         
-        # Capture the frame
-        # if frame_count < max_frames:
-        #     buffer = glReadPixels(0, 0, x_window * 2, y_window * 2, GL_RGB, GL_UNSIGNED_BYTE)
-        #     image = Image.frombytes("RGB", (x_window * 2, y_window * 2), buffer)
-        #     image = image.transpose(Image.FLIP_TOP_BOTTOM)
-        #     image.save(f"Captures/frame_{frame_count:04d}.png")
-        #     frame_count += 1
+        #Capture frame
+        buffer = glReadPixels(0, 0, x_window * 2, y_window * 2, GL_RGB, GL_UNSIGNED_BYTE)
+        image = Image.frombytes("RGB", (x_window * 2, y_window * 2), buffer)
+        image = np.flipud(image) 
+        writer.append_data(image)
+        
+        frame_count += 1
+        if frame_count >= fps * duration:
+            break
         
         glBindVertexArray(0)
         glUseProgram(0)
@@ -130,8 +115,7 @@ def main():
         glfw.swap_buffers(window)
         glfw.poll_events()
 
-    # Create video of window on exit
-    create_video("Captures", "Post-process-1")
+    writer.close()
     glfw.terminate()
 
 if __name__ == "__main__":

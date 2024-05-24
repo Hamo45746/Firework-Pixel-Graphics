@@ -5,24 +5,16 @@ out vec4 FragColour;
 in vec2 TexCoord;
 
 uniform sampler2D screenTexture;
-uniform float time;
 
-void main()
-{
-    vec2 uv = TexCoord;
-    vec3 colour = texture(screenTexture, uv).rgb;
+void main() {
+    // REF: https://medium.com/@rupertontheloose/functional-shaders-a-colorful-intro-part4-gray-scale-d8595ec75601
+ 
+    vec3 sample = texture(screenTexture, TexCoord).rgb;
     
-    // Adjust colour channels for atmosphere
-    colour.r = colour.r * 0.7;
-    colour.g = colour.g * 0.4;
-    colour.b = colour.b * 0.9;
+    // Calculate luminance
+    float luminance = 0.3 * sample.r + 0.59 * sample.g + 0.11 * sample.b;
     
-    // Add noise
-    float noise = fract(sin(dot(uv, vec2(13, 78))) * 43759);
-    colour += vec3(noise * 0.1);
+    vec3 grayscale = vec3(luminance);
     
-    // Darken the overall image
-    colour *= 0.9;
-    
-    FragColour = vec4(colour, 1.0);
+    FragColour = vec4(grayscale, 1.0);
 }
