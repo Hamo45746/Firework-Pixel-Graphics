@@ -3,6 +3,8 @@ from OpenGL.GL import *
 from PIL import Image
 from gl_utils import *
 
+# Overall REF: https://github.com/fendevel/Guide-to-Modern-OpenGL-Functions
+
 class Background:
     def __init__(self, width, height):
         self.width = width
@@ -47,7 +49,7 @@ class Background:
         return grid
     
     def setup_background(self):
-        # Generate first background texture - not working
+        # Generate star background texture
         self.setup_texture()
 
         # Vertices for a full-screen quad with texture coordinates
@@ -70,6 +72,7 @@ class Background:
         self.vbo = create_buffer(vertices)
         glBindVertexArray(self.vao)
         glBindBuffer(GL_ARRAY_BUFFER, self.vbo)
+        #REF: https://registry.khronos.org/OpenGL-Refpages/gl4/html/glVertexAttribPointer.xhtml
         glVertexAttribPointer(0, 2, GL_FLOAT, False, 4 * 4, ctypes.c_void_p(0))
         glEnableVertexAttribArray(0)
         glVertexAttribPointer(1, 2, GL_FLOAT, False, 4 * 4, ctypes.c_void_p(2 * 4))
@@ -148,7 +151,8 @@ class Background:
             tex_right = (self.scroll_position + self.width) / self.width
 
             glActiveTexture(GL_TEXTURE0)
-            glBindTexture(GL_TEXTURE_2D, texture_id)
+            glBindTexture(GL_TEXTURE_2D, texture_id) 
+            # Attribute inputs to move accoring to panning
             glUniform1f(glGetUniformLocation(self.shader_program, "scroll_position"), self.scroll_position)
             glUniform1f(glGetUniformLocation(self.shader_program, "tex_left"), tex_left)
             glUniform1f(glGetUniformLocation(self.shader_program, "tex_right"), tex_right)

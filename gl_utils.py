@@ -2,7 +2,6 @@ from OpenGL.GL import *
 import numpy as np
 
 def create_buffer(data, data_type=GL_ARRAY_BUFFER, usage=GL_DYNAMIC_DRAW):
-    """ Create a buffer (VBO or EBO) and upload data to it. """
     buffer_id = glGenBuffers(1)
     glBindBuffer(data_type, buffer_id)
     array_type = GLfloat if data_type == GL_ARRAY_BUFFER else GLuint
@@ -11,13 +10,11 @@ def create_buffer(data, data_type=GL_ARRAY_BUFFER, usage=GL_DYNAMIC_DRAW):
     return buffer_id
 
 def create_vao():
-    """ Create a Vertex Array Object (VAO). """
     vao_id = glGenVertexArrays(1)
     glBindVertexArray(vao_id)
     return vao_id
 
 def load_shader(source, shader_type):
-    """Compiles a shader from provided source code."""
     shader = glCreateShader(shader_type)
     glShaderSource(shader, source)
     glCompileShader(shader)
@@ -25,7 +22,6 @@ def load_shader(source, shader_type):
 
 
 def create_shader_program(vertex_source_path, fragment_source_path):
-    """Creates a shader program from vertex and fragment shader sources."""
     with open(vertex_source_path, 'r') as f:
         vertex_source = f.read()
     with open(fragment_source_path, 'r') as f:
