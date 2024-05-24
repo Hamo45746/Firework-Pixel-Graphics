@@ -6,6 +6,7 @@ from background import Background
 from particle import FlameParticle, SmokeParticle
 from gl_utils import *
 
+# REF: https://learnopengl.com/Getting-started/Hello-Triangle
 
 class Simulation:
     def __init__(self, width, height, scaling_factor):
@@ -134,11 +135,10 @@ class Simulation:
         glUseProgram(0)
 
     def render(self):
-        # Clear the color and depth buffers
         glClearColor(0.0, 0.0, 0.0, 1.0)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-        # Render the background
+        # Rende background
         self.background.render()
 
         if len(self.fireworks) != 0:

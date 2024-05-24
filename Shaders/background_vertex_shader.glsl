@@ -1,4 +1,7 @@
 #version 330 core
+// REF: https://learnopengl.com/Getting-started/Shaders
+// REF: https://learnopengl.com/Advanced-OpenGL/Framebuffers
+// REF: https://learnopengl.com/Advanced-OpenGL/Advanced-GLSL
 
 layout (location = 0) in vec2 aPos;
 layout (location = 1) in vec2 aTexCoord;

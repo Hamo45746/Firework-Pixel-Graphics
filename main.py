@@ -3,7 +3,6 @@ from OpenGL.GL import *
 from simulation import Simulation
 from PIL import Image
 from gl_utils import create_quad_vao, create_shader_program
-import os
 import imageio
 import numpy as np
 
@@ -23,21 +22,21 @@ def main():
     writer = imageio.get_writer('Captures/PP_Stormy.mp4', fps=fps)
     frame_count = 0
     
+    
     glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
     glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
     glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
-    glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, GL_TRUE)  # Needed on macOS
+    glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, GL_TRUE)  # Needed on macOS?
 
     window = glfw.create_window(x_window, y_window, "Firework Pixels", None, None)
-    if not window:
-        glfw.terminate()
-        return
+
     #glfw.window_hint(glfw.DOUBLEBUFFER, True)
     glfw.make_context_current(window)
     glfw.swap_interval(1)
 
     sim = Simulation(grid_width, grid_height, scaling_factor)
 
+    # REF: https://learnopengl.com/Advanced-OpenGL/Framebuffers 
     # Create a framebuffer for off-screen rendering
     fbo = glGenFramebuffers(1)
     glBindFramebuffer(GL_FRAMEBUFFER, fbo)
@@ -75,7 +74,7 @@ def main():
     glfw.set_cursor_pos_callback(window, on_mouse_move)
 
     while not glfw.window_should_close(window):
-        #render sim to off-screen framebuffer
+        #Render sim to off-screen framebuffer
         glBindFramebuffer(GL_FRAMEBUFFER, fbo)
         glViewport(0, 0, x_window * 2, y_window * 2)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -83,7 +82,7 @@ def main():
         sim.update()
         sim.render()
             
-       # post-process: render framebuffer texture to screen
+       # Post-process: render framebuffer texture to screen
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
         glViewport(0, 0, x_window * 2, y_window * 2)
 

@@ -34,6 +34,6 @@ class Firework:
             # Horizontal velocity
             vx = magnitude * math.cos(angle)
             # Vertical velocity
-            vy = magnitude * math.sin(angle) - 0.75
+            vy = magnitude * math.sin(angle) - 0.75 # slowdown - particles lighter than fw
             lifespan = 150
             self.particles.append(Particle(self.x, self.y, vx, vy, colour, lifespan))

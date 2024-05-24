@@ -1,8 +1,9 @@
 from OpenGL.GL import *
 import numpy as np
 
+#REF: https://antongerdelan.net/opengl/vertexbuffers.html
+
 def create_buffer(data, data_type=GL_ARRAY_BUFFER, usage=GL_DYNAMIC_DRAW):
-    """ Create a buffer (VBO or EBO) and upload data to it. """
     buffer_id = glGenBuffers(1)
     glBindBuffer(data_type, buffer_id)
     array_type = GLfloat if data_type == GL_ARRAY_BUFFER else GLuint
@@ -11,27 +12,18 @@ def create_buffer(data, data_type=GL_ARRAY_BUFFER, usage=GL_DYNAMIC_DRAW):
     return buffer_id
 
 def create_vao():
-    """ Create a Vertex Array Object (VAO). """
     vao_id = glGenVertexArrays(1)
     glBindVertexArray(vao_id)
     return vao_id
 
 def load_shader(source, shader_type):
-    """Compiles a shader from provided source code."""
     shader = glCreateShader(shader_type)
     glShaderSource(shader, source)
     glCompileShader(shader)
-    # Check for compilation errors
-    # if not glGetShaderiv(shader, GL_COMPILE_STATUS):
-    #     error = glGetShaderInfoLog(shader).decode('utf-8')
-    #     print(f'Error compiling shader: {error}')
-    #     glDeleteShader(shader)
-    #     raise Exception(f"Shader compilation error: {error}")
     return shader
 
 
 def create_shader_program(vertex_source_path, fragment_source_path):
-    """Creates a shader program from vertex and fragment shader sources."""
     with open(vertex_source_path, 'r') as f:
         vertex_source = f.read()
     with open(fragment_source_path, 'r') as f:
@@ -45,24 +37,16 @@ def create_shader_program(vertex_source_path, fragment_source_path):
     glAttachShader(program, fragment_shader)
     glLinkProgram(program)
 
-    # Check linking errors
-    # if not glGetProgramiv(program, GL_LINK_STATUS):
-    #     error = glGetProgramInfoLog(program).decode('utf-8')
-    #     print(f'Error linking program: {error}')
-    #     glDeleteProgram(program)
-    #     raise Exception(f"Program linking error: {error}")
-
     glDeleteShader(vertex_shader)
     glDeleteShader(fragment_shader)
     return program
 
 def create_quad_vao():
     quad_vertices = np.array([
-        # positions     # texture coords
-        -1.0,  1.0,      0.0, 1.0,
-        -1.0, -1.0,      0.0, 0.0,
-         1.0, -1.0,      1.0, 0.0,
-         1.0,  1.0,      1.0, 1.0,
+        -1.0,  1.0, 0.0, 1.0,
+        -1.0, -1.0, 0.0, 0.0,
+         1.0, -1.0, 1.0, 0.0,
+         1.0,  1.0, 1.0, 1.0,
     ], dtype=np.float32)
 
     indices = np.array([0, 1, 2, 2, 3, 0], dtype=np.uint32)

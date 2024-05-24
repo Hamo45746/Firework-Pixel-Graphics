@@ -20,7 +20,7 @@ class Particle:
 
 class FlameParticle(Particle):
     def __init__(self, x, y):
-        vx = random.uniform(-0.03, 0.03)
+        vx = random.uniform(-0.03, 0.03) # slow 'floaty' velocity
         vy = random.uniform(-0.1, -0.05)
         red = 1
         green = random.uniform(0.3, 0.8)
@@ -30,7 +30,7 @@ class FlameParticle(Particle):
 
     def update(self):
         self.x += self.vx
-        self.vy += 0.0003  # Gravity effect
+        self.vy += 0.0003  # Gravity effect -lower for lighter particles
         self.y += self.vy
         
         if self.lifespan:

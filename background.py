@@ -3,6 +3,13 @@ from OpenGL.GL import *
 from PIL import Image
 from gl_utils import *
 
+# REF: https://antongerdelan.net/opengl/vertexbuffers.html
+# REF: https://learnopengl.com/Getting-started/Hello-Triangle
+# REF: https://learnopengl.com/Getting-started/Textures
+# REF: https://registry.khronos.org/OpenGL-Refpages/gl4/html/glTexParameter.xhtml
+# REF: https://registry.khronos.org/OpenGL-Refpages/gl4/html/glVertexAttribPointer.xhtml
+# REF: https://learnopengl.com/Getting-started/Coordinate-Systems
+
 class Background:
     def __init__(self, width, height):
         self.width = width
@@ -20,7 +27,6 @@ class Background:
         self.setup_background()
 
     def create_background(self):
-        # Initialise empty grid to represent the background scene
         grid = []
 
         ground_colours = [
@@ -40,14 +46,14 @@ class Background:
                 row = [(0, 0, 0)] * self.background_width
             grid.append(row)
         for _ in range(150):
-            # Generate random coordinates for stars
+           # random coordinates for stars
             x = random.randint(0, self.background_width - 1)
             y = random.randint(0, self.height * 3 // 4 - 1)
             grid[y][x] = (1, 1, 1)  # Note reversal of x and y for indexing
         return grid
     
     def setup_background(self):
-        # create far background 
+        # create far background -stars
         self.setup_texture()
 
         # Vertices for a full-screen quad with texture coordinates
@@ -96,7 +102,7 @@ class Background:
         glBindTexture(GL_TEXTURE_2D, texture_id)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.width, img.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img_data)
         
-        # Set the texture filtering parameters
+        # Settexture filtering parameters
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
         
@@ -104,12 +110,11 @@ class Background:
         return texture_id
 
     def load_additional_textures(self):
-        # Load images as textures
         background_texture = self.load_image_as_texture("PNGs/Background.png")
         self.additional_textures.append((background_texture, (0, 0), 1)) # (texture_id, position, scale)
     
     def setup_texture(self):
-        # Flatten grid + convert to format suitable for OpenGL texture
+        # Flatten grid + convert to bytes
         data = []
         for row in self.grid:
             for colour in row:
@@ -130,7 +135,7 @@ class Background:
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glUseProgram(self.shader_program)
         
-        # render first background texture self.texture_id to its properly scaled vao
+        # render first background texture self.texture_id to properly scaled vao
         glBindVertexArray(self.grid_back_vao)
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, self.texture_id)
