@@ -1,20 +1,16 @@
 #version 330 core
 
 out vec4 FragColour;
-
 in vec2 TexCoord;
 
 uniform sampler2D screenTexture;
 
 void main() {
-    // REF: https://medium.com/@rupertontheloose/functional-shaders-a-colorful-intro-part4-gray-scale-d8595ec75601
- 
     vec3 sample = texture(screenTexture, TexCoord).rgb;
+    //REF: https://stackoverflow.com/questions/944713/help-with-pixel-shader-effect-for-brightness-and-contrast
+    // Increase contrast
+    vec3 contrast = (sample - 0.5) * 2.0 + 0.5;
     
-    // Calculate luminance
-    float luminance = 0.3 * sample.r + 0.59 * sample.g + 0.11 * sample.b;
-    
-    vec3 grayscale = vec3(luminance);
-    
-    FragColour = vec4(grayscale, 1.0);
+    FragColour = vec4(contrast, 1.0);
 }
+

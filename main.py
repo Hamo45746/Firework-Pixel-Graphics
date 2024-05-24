@@ -20,7 +20,7 @@ def main():
     # set up video
     fps = 60
     duration = 10  # seconds
-    #writer = imageio.get_writer('', fps=fps)
+    writer = imageio.get_writer('Captures/PP_Stormy.mp4', fps=fps)
     frame_count = 0
     
     glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
@@ -75,6 +75,7 @@ def main():
     glfw.set_cursor_pos_callback(window, on_mouse_move)
 
     while not glfw.window_should_close(window):
+        #render sim to off-screen framebuffer
         glBindFramebuffer(GL_FRAMEBUFFER, fbo)
         glViewport(0, 0, x_window * 2, y_window * 2)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -82,7 +83,10 @@ def main():
         sim.update()
         sim.render()
             
-       # Post-process
+       # post-process: render framebuffer texture to screen
+        glBindFramebuffer(GL_FRAMEBUFFER, 0)
+        glViewport(0, 0, x_window * 2, y_window * 2)
+
         glUseProgram(quad_shader_program)
         glUniform1i(glGetUniformLocation(quad_shader_program, "screenTexture"), 0)
         #glUniform1f(glGetUniformLocation(quad_shader_program, "time"), glfw.get_time())
@@ -90,12 +94,6 @@ def main():
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, frame_texture)
         
-        # Render framebuffer texture to screen
-        glBindFramebuffer(GL_FRAMEBUFFER, 0)
-        glViewport(0, 0, x_window * 2, y_window * 2)
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
-        glUseProgram(quad_shader_program)
         glBindVertexArray(quad_vao)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, None)
         
