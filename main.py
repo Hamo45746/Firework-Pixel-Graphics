@@ -3,7 +3,7 @@ from OpenGL.GL import *
 from simulation import Simulation
 from PIL import Image
 from gl_utils import create_quad_vao, create_shader_program
-import imageio
+# import imageio
 import numpy as np
 
 
@@ -17,10 +17,10 @@ def main():
     grid_height = int(y_window / scaling_factor)
     
     # set up video
-    fps = 60
-    duration = 10  # seconds
-    writer = imageio.get_writer('Captures/PP_Stormy.mp4', fps=fps)
-    frame_count = 0
+    # fps = 60
+    # duration = 10  # seconds
+    # # writer = imageio.get_writer('Captures/PP_Stormy.mp4', fps=fps)
+    # frame_count = 0
     
     
     glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
@@ -97,14 +97,14 @@ def main():
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, None)
         
         #Capture frame
-        buffer = glReadPixels(0, 0, x_window * 2, y_window * 2, GL_RGB, GL_UNSIGNED_BYTE)
-        image = Image.frombytes("RGB", (x_window * 2, y_window * 2), buffer)
-        image = np.flipud(image) 
-        writer.append_data(image)
+        # buffer = glReadPixels(0, 0, x_window * 2, y_window * 2, GL_RGB, GL_UNSIGNED_BYTE)
+        # image = Image.frombytes("RGB", (x_window * 2, y_window * 2), buffer)
+        # image = np.flipud(image) 
+        # writer.append_data(image)
         
-        frame_count += 1
-        if frame_count >= fps * duration:
-            break
+        # frame_count += 1
+        # if frame_count >= fps * duration:
+        #     break
         
         glBindVertexArray(0)
         glUseProgram(0)
@@ -112,7 +112,7 @@ def main():
         glfw.swap_buffers(window)
         glfw.poll_events()
 
-    writer.close()
+    # writer.close()
     glfw.terminate()
 
 if __name__ == "__main__":
