@@ -1,8 +1,8 @@
 import glfw
 from OpenGL.GL import *
 from simulation import Simulation
-# import imageio
-# import numpy as np
+import imageio
+import numpy as np
 
 def main():
     if not glfw.init():
